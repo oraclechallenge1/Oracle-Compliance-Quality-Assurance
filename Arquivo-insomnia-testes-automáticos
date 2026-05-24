@@ -1,0 +1,725 @@
+type: spec.insomnia.rest/5.0
+schema_version: "5.1"
+name: New Document
+meta:
+  id: wrk_349f1b96e211417080cc25eba7d7cc86
+  created: 1737654736760
+  modified: 1737654736760
+  description: ""
+collection:
+  - url: http://localhost:8080/api/v4/auth/login
+    name: Login (200)
+    meta:
+      id: req_db333b51cc9949e5948964a89453344f
+      created: 1737654736768
+      modified: 1779333657719
+      isPrivate: false
+      description: ""
+      sortKey: -1737654736768
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "prof@fiap.com.br",
+          "password": "12345678"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: |-
+        const statusCode = insomnia.response.code;
+        const body = insomnia.response.json();
+
+        insomnia.test("Login - Deve retornar status 200", function () {
+            expect(statusCode).to.equal(200);
+        });
+
+        insomnia.test("Login - Deve retornar corpo JSON", function () {
+            expect(body).to.be.an("object");
+        });
+
+        insomnia.test("Login - Deve retornar token JWT", function () {
+            const token = body.token || body.accessToken || body.jwt;
+
+            expect(token).to.not.be.undefined;
+            expect(token).to.be.a("string");
+            expect(token.length).to.be.greaterThan(10);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines
+    name: Cadastro de Medicamento (201)
+    meta:
+      id: req_ff2c75876cbc437f97000c9980998ff1
+      created: 1779155583160
+      modified: 1779333067641
+      isPrivate: false
+      description: ""
+      sortKey: -1779155583160
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nameMedication": "Medicamento de Teste API",
+          "statusMed": "Ativo",
+          "anvisaCode": "ANVISA-000100",
+          "activeIngredientIds": [
+            2
+          ],
+          "pharmFormIds": [
+            1
+          ],
+          "categoryMedicineId": 2,
+          "unitMeasureId": 3
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+      prefix: ""
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+        const body = insomnia.response.json();
+
+
+        insomnia.test("CT02 - Status code deve ser 200 ou 201", function () {
+            expect([200, 201]).to.include(statusCode);
+        });
+
+
+        insomnia.test("CT02 - Resposta deve ser um objeto JSON", function () {
+            expect(body).to.be.an("object");
+        });
+
+
+        insomnia.test("CT02 - Deve retornar ID do medicamento", function () {
+            expect(body.id).to.not.be.undefined;
+            expect(body.id).to.be.a("number");
+        });
+
+
+        insomnia.test("CT02 - Nome do medicamento deve estar correto", function
+        () {
+            expect(body.nameMedication).to.equal("Medicamento de Teste API");
+        });
+
+
+        insomnia.test("CT02 - Status do medicamento deve estar correto",
+        function () {
+            expect(body.statusMed).to.equal("Ativo");
+        });
+
+
+        insomnia.test("CT02 - Código ANVISA deve estar correto", function () {
+            expect(body.anvisaCode).to.equal("ANVISA-000100");
+        });
+
+
+        insomnia.test("CT02 - Deve retornar ingrediente ativo", function () {
+            expect(body.activeIngredientIds).to.be.an("array");
+            expect(body.activeIngredientIds).to.include(2);
+        });
+
+
+        insomnia.test("CT02 - Deve retornar forma farmacêutica", function () {
+            expect(body.pharmFormIds).to.be.an("array");
+            expect(body.pharmFormIds).to.include(1);
+        });
+
+
+        insomnia.test("CT02 - Categoria do medicamento deve estar correta",
+        function () {
+            expect(body.categoryMedicineId).to.equal(2);
+        });
+
+
+        insomnia.test("CT02 - Unidade de medida deve estar correta", function ()
+        {
+            expect(body.unitMeasureId).to.equal(3);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines
+    name: Listar Medicamentos (200)
+    meta:
+      id: req_8d3d3202eccb460e8155b34e49133001
+      created: 1779158071227
+      modified: 1779333162574
+      isPrivate: false
+      description: ""
+      sortKey: -1779158071227
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+        const body = insomnia.response.json();
+
+
+        insomnia.test("CT03 - Status code deve ser 200", function () {
+            expect(statusCode).to.equal(200);
+        });
+
+
+        insomnia.test("CT03 - Resposta não deve ser vazia", function () {
+            expect(body).to.not.be.undefined;
+            expect(body).to.not.be.null;
+        });
+
+
+        insomnia.test("CT03 - Resposta deve ser lista ou objeto paginado",
+        function () {
+            if (Array.isArray(body)) {
+                expect(body).to.be.an("array");
+            } else {
+                expect(body).to.be.an("object");
+            }
+        });
+
+
+        insomnia.test("CT03 - Retorno deve estar em formato JSON válido",
+        function () {
+            expect(body).to.exist;
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines/85
+    name: Deletar Medicamento (204)
+    meta:
+      id: req_b213ff9a5c4a4a8f91126df64dae7f7f
+      created: 1779158158733
+      modified: 1779333595007
+      isPrivate: false
+      description: ""
+      sortKey: -1779158158733
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: |-
+        const statusCode = insomnia.response.code;
+
+        insomnia.test("CT05 - Status code deve ser 200 ou 204", function () {
+            expect([200, 204]).to.include(statusCode);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines/85
+    name: Atualizar Medicamento (201)
+    meta:
+      id: req_c081616fe43c42ac8fe6a9942b399cb1
+      created: 1779158514821
+      modified: 1779333473139
+      isPrivate: false
+      description: ""
+      sortKey: -1779158114980
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nameMedication": "Dipirona 85 Insomnia Atualizada",
+          "statusMed": "Ativo",
+          "anvisaCode": "ANVISA-000101",
+          "activeIngredientIds": [
+            1
+          ],
+          "pharmFormIds": [
+            2
+          ],
+          "categoryMedicineId": 3,
+          "unitMeasureId": 2
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("CT04 - Status code deve ser 200, 201 ou 204", function ()
+        {
+            expect([200, 201, 204]).to.include(statusCode);
+        });
+
+
+        if (statusCode !== 204) {
+            const body = insomnia.response.json();
+
+            insomnia.test("CT04 - Resposta deve ser um objeto JSON", function () {
+                expect(body).to.be.an("object");
+            });
+
+            insomnia.test("CT04 - Nome do medicamento deve ser atualizado", function () {
+                expect(body.nameMedication).to.equal("Dipirona 85 Insomnia Atualizada");
+            });
+        }
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/auth/login
+    name: Login (401)
+    meta:
+      id: req_acb0272d9ec941f8a768a7c5ac18fd06
+      created: 1779234621688
+      modified: 1779332997789
+      isPrivate: false
+      description: ""
+      sortKey: -1737654736718
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "teste@teste.com",
+          "password": "senha_errada"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTMzMjIzMywiaWF0IjoxNzc5MjQ1ODMzfQ.elM-C9DER9Jut6mDHnc_-ruaXr0zUQy7YmpImJXzyVg
+    scripts:
+      afterResponse: >+
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("Login inválido - Deve retornar erro de autenticação",
+        function () {
+            expect([400, 401, 403, 500]).to.include(statusCode);
+        });
+
+
+        insomnia.test("Login inválido - Não deve retornar status 200", function
+        () {
+            expect(statusCode).to.not.equal(200);
+        });
+
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines
+    name: Cadastro de Medicamento (409)
+    meta:
+      id: req_521cb541a4fb4ba3ba8cd33198d1f2e2
+      created: 1779247341055
+      modified: 1779333275946
+      isPrivate: false
+      description: ""
+      sortKey: -1758405159964
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nameMedication": "Medicamento de Teste 3",
+          "statusMed": "Ativo",
+          "anvisaCode": "ANVISA-000091",
+          "activeIngredientIds": [
+            2
+          ],
+          "pharmFormIds": [
+            1
+          ],
+          "categoryMedicineId": 2,
+          "unitMeasureId": 3
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+      prefix: ""
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("Cadastro duplicado - Deve retornar erro de conflito ou
+        validação", function () {
+            expect([400, 409, 422, 500]).to.include(statusCode);
+        });
+
+
+        insomnia.test("Cadastro duplicado - Não deve retornar sucesso", function
+        () {
+            expect(statusCode).to.not.equal(200);
+            expect(statusCode).to.not.equal(201);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines
+    name: Listar Medicamentos (403)
+    meta:
+      id: req_a07c1ed3a896427ba98946476d9ac93e
+      created: 1779247504699
+      modified: 1779333212634
+      isPrivate: false
+      description: ""
+      sortKey: -1779156827193.5
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("Listar sem token - Deve retornar erro de autorização",
+        function () {
+            expect([401, 403]).to.include(statusCode);
+        });
+
+
+        insomnia.test("Listar sem token - Não deve retornar status 200",
+        function () {
+            expect(statusCode).to.not.equal(200);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines/999999
+    name: Buscar Medicamento Especifico (404)
+    meta:
+      id: req_369fcac0c637474396eb9fd8404c50e6
+      created: 1779247559780
+      modified: 1779333307337
+      isPrivate: false
+      description: ""
+      sortKey: -1779158082165.25
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("Buscar medicamento inexistente - Deve retornar 404",
+        function () {
+            expect([404, 400]).to.include(statusCode);
+        });
+
+
+        insomnia.test("Buscar medicamento inexistente - Não deve retornar
+        sucesso", function () {
+            expect(statusCode).to.not.equal(200);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines/99999
+    name: Atualizar Medicamento (403)
+    meta:
+      id: req_fa57757d9d42432f993ac4d68d963576
+      created: 1779247685512
+      modified: 1779333517262
+      isPrivate: false
+      description: ""
+      sortKey: -1779158093103.5
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nameMedication": "Medicamento Inexistente Atualizado",
+          "statusMed": "Ativo",
+          "anvisaCode": "ANVISA-ERRO-999",
+          "activeIngredientIds": [2],
+          "pharmFormIds": [1],
+          "categoryMedicineId": 2,
+          "unitMeasureId": 3
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("Atualizar inexistente - Deve retornar erro", function ()
+        {
+            expect([400, 404]).to.include(statusCode);
+        });
+
+
+        insomnia.test("Atualizar inexistente - Não deve retornar sucesso",
+        function () {
+            expect(statusCode).to.not.equal(200);
+            expect(statusCode).to.not.equal(201);
+            expect(statusCode).to.not.equal(204);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines/999999
+    name: Deletar Medicamento (404)
+    meta:
+      id: req_b195e7291c294950b28f041a2ef97d9b
+      created: 1779248129401
+      modified: 1779333663792
+      isPrivate: false
+      description: ""
+      sortKey: -1779158136856.5
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("Deletar inexistente - Deve retornar 404 ou 400", function
+        () {
+            expect([400, 404]).to.include(statusCode);
+        });
+
+
+        insomnia.test("Deletar inexistente - Não deve retornar sucesso",
+        function () {
+            expect(statusCode).to.not.equal(200);
+            expect(statusCode).to.not.equal(204);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/v4/medicines/85
+    name: Buscar Medicamento Especifico (200)
+    meta:
+      id: req_93ff72be063e4d019cdfc698e12a6ea4
+      created: 1779333339103
+      modified: 1779333381546
+      isPrivate: false
+      description: ""
+      sortKey: -1779158076696.125
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMSwic3ViIjoicHJvZkBmaWFwLmNvbS5iciIsImV4cCI6MTc3OTQxOTMwNywiaWF0IjoxNzc5MzMyOTA3fQ.tbI50BrCpR8S-T559vDr71ubMx5IzadA2ZcuH-DCodU
+    scripts:
+      afterResponse: >-
+        const statusCode = insomnia.response.code;
+
+
+        insomnia.test("Buscar medicamento - Deve retornar 200", function () {
+            expect([200]).to.include(statusCode);
+        });
+
+
+        insomnia.test("Buscar medicamento inexistente - Não deve retornar
+        sucesso", function () {
+            expect(statusCode).to.not.equal(400);
+        });
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_dd87777d65e6f8edd7263fb339c1229c9c7e1bc7
+    created: 1737654736765
+    modified: 1779367996283
+  cookies:
+    - id: 0187cd19-0fb3-4ec1-8a23-3e5614956fee
+      key: ARRAffinity
+      value: 9e89c1d60cfdd954c8867d82790648aafd773e27a2d4103f500276884301a0da
+      domain: medsave-webapp-rm560442.azurewebsites.net
+      path: /
+      secure: true
+      httpOnly: true
+      hostOnly: false
+    - id: c472b2ac-9dfa-4c43-a395-a96fb7e2b925
+      key: ARRAffinitySameSite
+      value: 9e89c1d60cfdd954c8867d82790648aafd773e27a2d4103f500276884301a0da
+      domain: medsave-webapp-rm560442.azurewebsites.net
+      path: /
+      secure: true
+      httpOnly: true
+      hostOnly: false
+environments:
+  name: Base Environment
+  meta:
+    id: env_dd87777d65e6f8edd7263fb339c1229c9c7e1bc7
+    created: 1737654736764
+    modified: 1779333672088
+    isPrivate: false
+spec:
+  meta:
+    id: spc_d1cc762c5fc44910b41589cfc60a6367
+    created: 1737654736761
+    modified: 1779367315146
+testSuites:
+  - name: Example Test Suite
+    meta:
+      id: uts_61a8f39077fc41019fdc54f629103260
+      created: 1737654736769
+      modified: 1737654736769
+      sortKey: -1779407193486
